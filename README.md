@@ -37,3 +37,11 @@ Launch on own server or use NewsOracle.Org for keeping data cached (db service) 
 - handled as configurable "plugins"
     - e.g., plugin sourcing from `reuters`
     - e.g., plugin sourcing from `newsapi` and plugin your apikey
+
+
+### should support:
+- api access to data
+- manual access to data
+- free access to data from past month
+    - up to N requests
+- cheap access to one bulk request (e.g., for research)
