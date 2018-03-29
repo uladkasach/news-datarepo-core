@@ -35,7 +35,7 @@ Launch on own server or use NewsOracle.Org for keeping data cached (db service) 
 
 
 ### Data Stored
-```
+```js
     {
         publisher : __, // extracted from url
         timestamp : __, // retreived from sources

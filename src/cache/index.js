@@ -14,12 +14,17 @@
 
 
 */
-var models = require("../models")
+var Models = require("../models")
 
-var cache = {
+var Cache = function(database_config){
+    var models = new Models(database_config); // initialize database w/ the config supplied
+    this.models = models;
+}
+
+Cache.prototype = {
     retrieve : async function(query_identifier){
         // if query not in database, return null
-        var query = await models.Query.find({where:{Identifier : query_identifier}})
+        var query = await this.models.Query.find({where:{Identifier : query_identifier}})
         if(query == null) return null; // return that no data exists if query has not yet been defined
 
         // if in database, return all articles for query
@@ -28,13 +33,13 @@ var cache = {
     },
     record : async function(query_identifier, articles){
         // find query. if query exists, warn user. if query does not, create it
-        var [query, created] = await models.Query.findOrCreate({where:{Identifier : query_identifier}})
+        var [query, created] = await this.models.Query.findOrCreate({where:{Identifier : query_identifier}})
         if(!created) console.log("query for " + query_identifier + " already exists... why did we not use cache.retreive instead?");
 
         // find or create each article. ensure each is associated with query
         for(var i = 0; i < articles.length; i++){
             var article_data = articles[i];
-            var [article, created] = await models.Article.findOrCreate({where:{
+            var [article, created] = await this.models.Article.findOrCreate({where:{
                 Published : article_data.published,
                 Title : article_data.title,
                 Description : article_data.description,
@@ -49,4 +54,4 @@ var cache = {
 }
 
 
-module.exports = cache;
+module.exports = Cache;

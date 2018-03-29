@@ -1,10 +1,11 @@
 var assert = require("assert");
 
-var models = require("../src/models")
+var Models = require("../src/models")
+var Cache = require("../src/cache")
 var Source = require("../src/sources/class.js")
-var cache = require("../src/cache")
 
 var news_api_live_config = require("./config/sources.json")[0];
+var sequelize_config = require("./config/sequelize.json");
 
 
 // unhandled promisses add details:
@@ -15,13 +16,16 @@ process.on('unhandledRejection', (reason, p) => {
 
 
 
-describe("initialization", function(){
-    it("should be able to initialize database", async function(){
-        return models.initialize(); // initialize db
+describe("models", function(){
+    it("should be able to initialize database",  async function(){
+        var models = new Models(sequelize_config);
+        await models.promise_initialized;
     })
 })
+return;
 describe("caching", function(){
     it("should find no articles for a non-cached query", async function(){
+        var cache = new Cache(sequelize_config);
         var articles = await cache.retrieve("non existant query");
         assert.equal(articles, null);
     })
@@ -74,7 +78,7 @@ describe("caching", function(){
         assert.equal(articles.length, 1)
     })
 })
-
+return;
 describe("sources", function(){
     describe("initialization", function(){
         it("should be able to load a source from a config", async function(){

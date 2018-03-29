@@ -1,6 +1,5 @@
-var cache = require("../cache")
 
-var SourceWrapper = function(config){
+var SourceWrapper = function(config, cache){
     // get module
     if(typeof config.module == "undefined") throw new Error("config.module must be defined for source");
     var Source = require(config.module);
@@ -10,6 +9,9 @@ var SourceWrapper = function(config){
     if(typeof config.init_args == "undefined") throw new Error("config.init_args must be defined for a source");
     var source = new Source(...config.init_args);
     this._source = source; // append source to object
+
+    // append cache
+    this.cache = cache;
 }
 SourceWrapper.prototype = {
     retrieve : async function(query_params){
