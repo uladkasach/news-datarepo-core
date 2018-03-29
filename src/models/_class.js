@@ -19,6 +19,9 @@ var Models = function(config, bool_force_sync){
     // define all associations between models
     this.__define_model_associations(models);
 
+    // append all models to this object; support models.MODEL_NAME usage
+    this.__append_models_to_self(models);
+
     // start and sync the database
     if(bool_force_sync !== true) bool_force_sync = false; // default to false
     this.promise_initialized = this.sequelize.sync({force : bool_force_sync});
@@ -63,6 +66,14 @@ Models.prototype = {
             if (models[model_name].associate)  models[model_name].associate(models); // if associate fn is defined, run associate and pass all models to it
         });
     },
+
+    // append models to self
+    __append_models_to_self : function(models){
+        var key_val_list = Object.entries(models);
+        key_val_list.forEach(([model_name, model])=>{
+            this[model_name] = model;
+        })
+    }
 }
 
 module.exports = Models;

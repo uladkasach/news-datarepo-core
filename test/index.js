@@ -14,6 +14,7 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 
+var thorough = true;
 
 
 describe("models", function(){
@@ -21,8 +22,11 @@ describe("models", function(){
         var models = new Models(sequelize_config);
         await models.promise_initialized;
     })
+    it("it should find that models are accessable through the object",  async function(){
+        var models = new Models(sequelize_config);
+        assert.equal(typeof models.Article, "function"); // testing one is enough.
+    })
 })
-return;
 describe("caching", function(){
     it("should find no articles for a non-cached query", async function(){
         var cache = new Cache(sequelize_config);
@@ -30,6 +34,7 @@ describe("caching", function(){
         assert.equal(articles, null);
     })
     it("should cache articles for a query", async function(){
+        var cache = new Cache(sequelize_config);
         var articles = [
             {
                 published : "2018-03-29 05:43:31",
@@ -54,6 +59,7 @@ describe("caching", function(){
         assert.equal(articles.length, 2)
     })
     it("should not duplicate articles if they are the same", async function(){
+        var cache = new Cache(sequelize_config);
         var articles = [
             {
                 published : "2018-03-29 05:43:31",
@@ -78,7 +84,6 @@ describe("caching", function(){
         assert.equal(articles.length, 1)
     })
 })
-return;
 describe("sources", function(){
     describe("initialization", function(){
         it("should be able to load a source from a config", async function(){
@@ -100,14 +105,17 @@ describe("sources", function(){
     })
     describe("querying", async function(){
         it("should be able to retrieve uncached data from a source", async function(){
-            this.skip();
-            var newsapi_source = new Source(news_api_live_config);
+            if(!thorough) this.skip();
+            var cache = new Cache(sequelize_config, true); // true to force sync the db
+            await cache.promise_initialized;
+            var newsapi_source = new Source(news_api_live_config, cache);
             var [articles, from_cache] = await newsapi_source.retrieve({query:"ford nyse"});
             assert.equal(Array.isArray(articles), true);
             assert.equal(from_cache, false);
         })
         it("should be able to retrieve uncached data from a source", async function(){
-            var newsapi_source = new Source(news_api_live_config);
+            var cache = new Cache(sequelize_config, true); // true to force sync the db
+            var newsapi_source = new Source(news_api_live_config, cache);
             var [articles, from_cache] = await newsapi_source.retrieve({query:"ford nyse"});
             assert.equal(Array.isArray(articles), true);
             assert.equal(from_cache, true);

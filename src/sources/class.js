@@ -18,11 +18,11 @@ SourceWrapper.prototype = {
         var query_identifier = this.module_name + "-"
                 + JSON.stringify(this._source.query_defaults) + "-" // handles including data from defaults into query cache string
                 + JSON.stringify(query_params);
-        var articles = await cache.retrieve(query_identifier);
+        var articles = await this.cache.retrieve(query_identifier);
         if(articles == null){
             var data_from_cache = false;
             var articles = await this._source.retrieve(query_params);
-            cache.record(query_identifier, articles);
+            this.cache.record(query_identifier, articles);
         } else {
             var data_from_cache = true;
         }
