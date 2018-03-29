@@ -21,8 +21,9 @@ SourceWrapper.prototype = {
         var articles = await this.cache.retrieve(query_identifier);
         if(articles == null){
             var data_from_cache = false;
-            var articles = await this._source.retrieve(query_params);
-            this.cache.record(query_identifier, articles);
+            articles = await this._source.retrieve(query_params);
+            await this.cache.record(query_identifier, articles);
+            articles = await this.cache.retrieve(query_identifier); // retreive articles from db
         } else {
             var data_from_cache = true;
         }

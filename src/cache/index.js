@@ -19,6 +19,7 @@ var Models = require("../models")
 var Cache = function(database_config){
     var models = new Models(database_config); // initialize database w/ the config supplied
     this.models = models;
+    this.promise_initialized = models.promise_initialized; // define when cache is initialized;
 }
 
 Cache.prototype = {

@@ -3,8 +3,10 @@ var assert = require("assert");
 var Models = require("../src/models")
 var Cache = require("../src/cache")
 var Source = require("../src/sources/class.js")
+var DataRepo = require("../src/core.js");
 
-var news_api_live_config = require("./config/sources.json")[0];
+var source_config =  require("./config/sources.json");
+var news_api_live_config = source_config[0];
 var sequelize_config = require("./config/sequelize.json");
 
 
@@ -14,7 +16,7 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 
-var thorough = true;
+var thorough = false;
 
 
 describe("models", function(){
@@ -106,7 +108,7 @@ describe("sources", function(){
     describe("querying", async function(){
         it("should be able to retrieve uncached data from a source", async function(){
             if(!thorough) this.skip();
-            var cache = new Cache(sequelize_config, true); // true to force sync the db
+            var cache = new Cache(sequelize_config);
             await cache.promise_initialized;
             var newsapi_source = new Source(news_api_live_config, cache);
             var [articles, from_cache] = await newsapi_source.retrieve({query:"ford nyse"});
@@ -114,11 +116,21 @@ describe("sources", function(){
             assert.equal(from_cache, false);
         })
         it("should be able to retrieve uncached data from a source", async function(){
-            var cache = new Cache(sequelize_config, true); // true to force sync the db
+            var cache = new Cache(sequelize_config);
             var newsapi_source = new Source(news_api_live_config, cache);
             var [articles, from_cache] = await newsapi_source.retrieve({query:"ford nyse"});
             assert.equal(Array.isArray(articles), true);
             assert.equal(from_cache, true);
         })
+    })
+})
+describe("core", function(){
+    it("should be able to initialize", function(){
+        var datarepo = new DataRepo(sequelize_config, source_config);
+    })
+    it("should be able to retreive data", async function(){
+        var datarepo = new DataRepo(sequelize_config, source_config);
+        var articles = await datarepo.retrieve({query:"nyse ford", page:1, from:"2018-01-01", to:"2018-01-15"});
+        assert.equal(Array.isArray(articles), true);
     })
 })
