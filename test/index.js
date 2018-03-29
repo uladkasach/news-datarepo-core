@@ -102,28 +102,22 @@ describe("sources", function(){
                 ]
             }
             */
-            var newsapi_source = new Source(news_api_live_config);
+            var cache = new Cache(sequelize_config);
+            var newsapi_source = new Source(news_api_live_config, cache);
         })
     })
     describe("querying", async function(){
-        it("should be able to retrieve uncached data from a source", async function(){
-            if(!thorough) this.skip();
-            var cache = new Cache(sequelize_config);
-            await cache.promise_initialized;
-            var newsapi_source = new Source(news_api_live_config, cache);
-            var [articles, from_cache] = await newsapi_source.retrieve({query:"ford nyse"});
-            assert.equal(Array.isArray(articles), true);
-            assert.equal(from_cache, false);
-        })
-        it("should be able to retrieve uncached data from a source", async function(){
+        it("should be able to retrieve data from a source", async function(){
+            this.skip();
             var cache = new Cache(sequelize_config);
             var newsapi_source = new Source(news_api_live_config, cache);
-            var [articles, from_cache] = await newsapi_source.retrieve({query:"ford nyse"});
+            console.log(newsapi_source);
+            var articles = await newsapi_source.retrieve({query:"ford nyse"});
             assert.equal(Array.isArray(articles), true);
-            assert.equal(from_cache, true);
         })
     })
 })
+/*
 describe("core", function(){
     it("should be able to initialize", function(){
         var datarepo = new DataRepo(sequelize_config, source_config);
@@ -133,4 +127,11 @@ describe("core", function(){
         var articles = await datarepo.retrieve({query:"nyse ford", page:1, from:"2018-01-01", to:"2018-01-15"});
         assert.equal(Array.isArray(articles), true);
     })
+    it("should be able to retreive data from cache after it was recorded", async function(){
+        this.skip();
+        var datarepo = new DataRepo(sequelize_config, source_config);
+        var articles = await datarepo.retrieve({query:"nyse ford", page:1, from:"2018-01-01", to:"2018-01-15"});
+        assert.equal(Array.isArray(articles), true);
+    })
 })
+*/

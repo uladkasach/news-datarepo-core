@@ -1,5 +1,19 @@
 # News.DataRepo Core
 
+## Usage
+
+### retreive / subscribe - to a request from a source
+- core wraps sources, which you can initialize from a config.json object, and caches requests that you send from it
+    - subscription runs retreivals on a `cron` and asks cache not to associate duplicate articles
+
+### Source Config
+- cache_identifier :
+    - defined for a source for each set of defaults. should be defined based on [model_name, defaults]
+    - "auto" can be used to define the `cache_identifier` as `md5(model_name+"-"+JSON.stringify(init_args))`
+        - NOTE: this is dangerous as if you use APIKeys your apikey is stored in a cryptographically insecure way
+
+## Notes
+
 ### Purpose:
 REST API interface for retreiving news about any stock index or other query
     - e.g., `NYSE:F`, `NYSE:SP500`

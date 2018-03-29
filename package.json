@@ -5,7 +5,7 @@
   "main": "newsapi.js",
   "scripts": {
     "test": "mocha",
-    "clean" : "node tools/clean_db.js"
+    "clean": "node tools/clean_db.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
     "news-datarepo-newsapi.org": "^1.0.3"
   },
   "dependencies": {
+    "md5": "^2.2.1",
     "mysql2": "^1.5.3",
     "sequelize": "^4.37.4"
   }

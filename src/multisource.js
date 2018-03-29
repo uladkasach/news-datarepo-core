@@ -3,6 +3,7 @@
 */
 var Source = require("./sources/class.js");
 var Cache = require("./cache/index.js");
+var md5 = require("md5");
 
 var Core = function(database_config, source_configs){
     // initialize the cache
@@ -20,6 +21,9 @@ var Core = function(database_config, source_configs){
     this.sources = sources;
 }
 Core.prototype = {
+    /*
+        user facing methods
+    */
     retrieve : async function(query_params){
         // await for cache to be loaded
         await this.cache.promise_initialized;
@@ -28,7 +32,7 @@ Core.prototype = {
         var articles_map = {};
         for(var i = 0; i < this.sources.length; i++){
             var source = this.sources[i];
-            var [articles, __] = await source.retrieve(query_params);
+            var [articles, __] = await this.source.retrieve(query_params);
             articles.forEach((article)=>{
                 articles_map[article.id] = article; // attach by id to overwrite duplicates
             })
@@ -43,6 +47,13 @@ Core.prototype = {
     subscribe : function(cron, query_params){
         // TODO
         // run this.retreive(query_params) every `cron`
-    }
+        // subscribe to each source
+    },
+    read_subscription : function(){
+        // TODO
+        // retreive all queries associated w/ subscription
+
+        
+    },
 }
 module.exports = Core;

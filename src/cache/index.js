@@ -24,6 +24,9 @@ var Cache = function(database_config){
 
 Cache.prototype = {
     retrieve : async function(query_identifier){
+        // ensure identifier is valid
+        if(typeof query_identifier != "string") throw new Error("query_identifier must be a string");
+
         // if query not in database, return null
         var query = await this.models.Query.find({where:{Identifier : query_identifier}})
         if(query == null) return null; // return that no data exists if query has not yet been defined
@@ -32,10 +35,16 @@ Cache.prototype = {
         var articles = await query.getArticles();
         return articles;
     },
-    record : async function(query_identifier, articles){
+    record : async function(query_identifier, articles, subscription){
+        // ensure identifier is valid
+        if(typeof query_identifier != "string") throw new Error("query_identifier must be a string");
+
         // find query. if query exists, warn user. if query does not, create it
         var [query, created] = await this.models.Query.findOrCreate({where:{Identifier : query_identifier}})
         if(!created) console.log("query for " + query_identifier + " already exists... why did we not use cache.retreive instead?");
+
+        // find subscription - if it exists, and add the query as a child of the subscription
+        if(typeof subscription != "undefined") subscription.addQuery(query);
 
         // find or create each article. ensure each is associated with query
         for(var i = 0; i < articles.length; i++){
@@ -46,11 +55,17 @@ Cache.prototype = {
                 Description : article_data.description,
                 Url : article_data.url,
             }})
-            query.addArticle(article); // add article to the query
+            query.addArticle(article); // add article to the query;
         }
 
         // resolve with success
         return true;
+    },
+    read : async function(subscription_id){
+        if(typeof subscription_id != "string") throw new Error("subscription id must be a string");
+        var subscription = await this.models.find({where:{PublicId:subscription_id}});
+        if(subscription == null) throw new Error("this subscription does not exist");
+        var queries = await subscription.getQueries();
     },
 }
 

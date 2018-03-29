@@ -1,6 +1,7 @@
 [
     {
         "module" : "news-datarepo-newsapi.org",
+        "cache_identifier" : "everything-en-business",
         "init_args" : [
             "an_api_key",
             {
