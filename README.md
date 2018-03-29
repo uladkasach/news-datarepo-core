@@ -7,9 +7,14 @@ REST API interface for retreiving news about any stock index or other query
 
 ### difference:
 Difference between this and newsapi.org is:
-1. that we cache the data for more than 1 month
-2. "subscribe to reports and store data" service
-3. launch the software on your own server and retreive data
+- not a service that aggregates all news data, this is software that enables developers to setup their own aggregation servers
+    - not as in depth as newsapi.org
+- e.g., launch the software on your own server and retrieve data
+
+
+### can enable
+- "subscribe to reports and store data" service where users dont have to make their own dbs
+
 
 ### usage
 Launch on own server or use NewsOracle.Org for keeping data cached (db service) + get data from their cache
@@ -18,12 +23,14 @@ Launch on own server or use NewsOracle.Org for keeping data cached (db service) 
 ### Data Stored
 ```
     {
-        source : __,
-        timestamp : __,
-        title : __,
-        url : __,
+        publisher : __, // extracted from url
+        timestamp : __, // retreived from sources
+        title : __, // retreived from sources
+        description : __, // retreived from sources
+        url : __, // retreived from sources
     }
 ```
+
 
 ### Data Sources:
 - aggregators
@@ -45,3 +52,10 @@ Launch on own server or use NewsOracle.Org for keeping data cached (db service) 
 - free access to data from past month
     - up to N requests
 - cheap access to one bulk request (e.g., for research)
+
+### should be able to:
+be initialized from a config file:
+- sources to be used
+    - including all initialization params for each source
+- db credentials
+    - which are used to ensure tables are setup and for caching in future
