@@ -25,8 +25,9 @@ var SourceWrapper = function(config, cache){
 }
 SourceWrapper.prototype = {
     retrieve : async function(query_params){
-        var articles = await this._retreive_articles_with_caching(query_params);
-        return articles;
+        var [articles, __] = await this._retreive_articles_with_caching(query_params);
+        var cleaned_articles = articles.map((article)=>article.get({plain:true}))
+        return cleaned_articles;
     },
     subscribe : async function(query_params, interval){
         // TODO

@@ -3,7 +3,6 @@ var assert = require("assert");
 var Models = require("../src/models")
 var Cache = require("../src/cache")
 var Source = require("../src/sources/class.js")
-var DataRepo = require("../src/core.js");
 
 var source_config =  require("./config/sources.json");
 var news_api_live_config = source_config[0];
@@ -16,7 +15,7 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 
-var thorough = false;
+var thorough = true;
 
 
 describe("models", function(){
@@ -108,30 +107,11 @@ describe("sources", function(){
     })
     describe("querying", async function(){
         it("should be able to retrieve data from a source", async function(){
-            this.skip();
+            if(!thorough) this.skip();
             var cache = new Cache(sequelize_config);
             var newsapi_source = new Source(news_api_live_config, cache);
-            console.log(newsapi_source);
             var articles = await newsapi_source.retrieve({query:"ford nyse"});
             assert.equal(Array.isArray(articles), true);
         })
     })
 })
-/*
-describe("core", function(){
-    it("should be able to initialize", function(){
-        var datarepo = new DataRepo(sequelize_config, source_config);
-    })
-    it("should be able to retreive data", async function(){
-        var datarepo = new DataRepo(sequelize_config, source_config);
-        var articles = await datarepo.retrieve({query:"nyse ford", page:1, from:"2018-01-01", to:"2018-01-15"});
-        assert.equal(Array.isArray(articles), true);
-    })
-    it("should be able to retreive data from cache after it was recorded", async function(){
-        this.skip();
-        var datarepo = new DataRepo(sequelize_config, source_config);
-        var articles = await datarepo.retrieve({query:"nyse ford", page:1, from:"2018-01-01", to:"2018-01-15"});
-        assert.equal(Array.isArray(articles), true);
-    })
-})
-*/

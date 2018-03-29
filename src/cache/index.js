@@ -19,11 +19,13 @@ var Models = require("../models")
 var Cache = function(database_config){
     var models = new Models(database_config); // initialize database w/ the config supplied
     this.models = models;
-    this.promise_initialized = models.promise_initialized; // define when cache is initialized;
 }
 
 Cache.prototype = {
     retrieve : async function(query_identifier){
+        // wait for db to be loaded
+        await this.models.promise_initialized;
+
         // ensure identifier is valid
         if(typeof query_identifier != "string") throw new Error("query_identifier must be a string");
 
@@ -36,6 +38,9 @@ Cache.prototype = {
         return articles;
     },
     record : async function(query_identifier, articles, subscription){
+        // wait for db to be loaded
+        await this.models.promise_initialized;
+
         // ensure identifier is valid
         if(typeof query_identifier != "string") throw new Error("query_identifier must be a string");
 
@@ -44,7 +49,7 @@ Cache.prototype = {
         if(!created) console.log("query for " + query_identifier + " already exists... why did we not use cache.retreive instead?");
 
         // find subscription - if it exists, and add the query as a child of the subscription
-        if(typeof subscription != "undefined") subscription.addQuery(query);
+        if(typeof subscription != "undefined") await subscription.addQuery(query);
 
         // find or create each article. ensure each is associated with query
         for(var i = 0; i < articles.length; i++){
@@ -55,17 +60,41 @@ Cache.prototype = {
                 Description : article_data.description,
                 Url : article_data.url,
             }})
-            query.addArticle(article); // add article to the query;
+            await query.addArticle(article); // add article to the query;
         }
 
         // resolve with success
         return true;
     },
     read : async function(subscription_id){
+        // wait for db to be loaded
+        await this.models.promise_initialized;
+
+        // retreive subscription
         if(typeof subscription_id != "string") throw new Error("subscription id must be a string");
         var subscription = await this.models.find({where:{PublicId:subscription_id}});
         if(subscription == null) throw new Error("this subscription does not exist");
+
+        // retreive queries for subscription
         var queries = await subscription.getQueries();
+
+        // merge articles for each query uniquely
+        var article_map = {};
+        for(var i = 0; i < queries.length; i++){
+            var query = queries[i];
+            var articles = await query.getArticles();
+            articles.forEach((article)=>{
+                article_map[article.id] = article; // append each article to map; note that duplicates overwrite previous
+            })
+        }
+        var articles = Object.values(article_map); // exctract articles into a list
+
+        // return unique articles
+        return articles;
+    },
+    subscribe : async function(cron, query_params){
+        // TODO
+        return subscription_id;
     },
 }
 
