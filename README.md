@@ -5,6 +5,20 @@ REST API interface for retreiving news about any stock index or other query
     - e.g., `NYSE:F`, `NYSE:SP500`
     - e.g., `trucks`, `cars`, `...`
 
+
+
+### key features
+- send queries to sources, cache the response, return all data
+- "subscribe" to a data feed
+    - define what queries to run for the subscription, define title of subscription, return all news results for subscription
+    - run "every X"
+- TODO : search all articles based on
+    - key words (in titles)(in text?)
+    - date
+- TODO: enables users to scrape the data easily into their own servers
+    - should give lots of warning that they should not share this data as it is copy writed
+
+
 ### difference:
 Difference between this and newsapi.org is:
 - not a service that aggregates all news data, this is software that enables developers to setup their own aggregation servers

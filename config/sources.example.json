@@ -1,0 +1,13 @@
+[
+    {
+        "module" : "news-datarepo-newsapi.org",
+        "init_args" : [
+            "an_api_key",
+            {
+                "endpoint" : "everything",
+                "language" : "us",
+                "catagory" : "business"
+            }
+        ]
+    }
+]

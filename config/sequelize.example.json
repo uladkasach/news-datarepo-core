@@ -1,0 +1,8 @@
+{
+    "database" : "NewsDataRepo",
+    "username" : "a_username",
+    "password" : "a_password",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging" : false
+}
