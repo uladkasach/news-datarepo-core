@@ -1,14 +1,20 @@
 'use strict';
+/*
+    note that this data is not used to restart subscriptions - it is just used to distinguish individual subscriptions in the db
+*/
 module.exports = function(sequelize, DataTypes) {
     var Subscription = sequelize.define('Subscription',
         {
-            Identifier : DataTypes.STRING,
-            Cron : DataTypes.STRING, // cron definition for how often it should be run
-            QueriesJSON : DataTypes.STRING, // json of queries to run
+            SourceIdentifier : DataTypes.STRING, // distinguishes between sources+defaults
+            QueryParamsJSON : DataTypes.STRING, // distinguishes between queries
+            PublicId : {
+                type : DataTypes.STRING,
+                defaultValue : DataTypes.UUIDV4,
+            }
         },
     );
     Subscription.associate = function(models) {
-        Subscription.hasMany(models.Query); // defines for example : model.getChildren()
+        Subscription.belongsToMany(models.Query, {through: 'Subscription_Query'}) // part of Subscription-Query Many-to-Many relationship
     };
     return Subscription;
 };

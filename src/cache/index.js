@@ -22,7 +22,7 @@ var Cache = function(database_config){
 }
 
 Cache.prototype = {
-    retrieve : async function(query_identifier){
+    retrieve : async function(query_identifier, subscription){
         // wait for db to be loaded
         await this.models.promise_initialized;
 
@@ -33,11 +33,14 @@ Cache.prototype = {
         var query = await this.models.Query.find({where:{Identifier : query_identifier}})
         if(query == null) return null; // return that no data exists if query has not yet been defined
 
+        // if query exists and it is retreived for a subscription, ensure that it is added to the subscription
+        if(typeof subscription != "undefined") await subscription.addQuery(query);
+
         // if in database, return all articles for query
         var articles = await query.getArticles();
         return articles;
     },
-    record : async function(query_identifier, articles, subscription){
+    record : async function(query_identifier, articles){
         // wait for db to be loaded
         await this.models.promise_initialized;
 
@@ -47,9 +50,6 @@ Cache.prototype = {
         // find query. if query exists, warn user. if query does not, create it
         var [query, created] = await this.models.Query.findOrCreate({where:{Identifier : query_identifier}})
         if(!created) console.log("query for " + query_identifier + " already exists... why did we not use cache.retreive instead?");
-
-        // find subscription - if it exists, and add the query as a child of the subscription
-        if(typeof subscription != "undefined") await subscription.addQuery(query);
 
         // find or create each article. ensure each is associated with query
         for(var i = 0; i < articles.length; i++){
@@ -72,7 +72,7 @@ Cache.prototype = {
 
         // retreive subscription
         if(typeof subscription_id != "string") throw new Error("subscription id must be a string");
-        var subscription = await this.models.find({where:{PublicId:subscription_id}});
+        var subscription = await this.models.Subscription.find({where:{PublicId:subscription_id}});
         if(subscription == null) throw new Error("this subscription does not exist");
 
         // retreive queries for subscription
@@ -90,11 +90,17 @@ Cache.prototype = {
         var articles = Object.values(article_map); // exctract articles into a list
 
         // return unique articles
+        var articles = articles.map(article=>article.get({plain:true})); // extract raw data from wrapped sequelize instance
         return articles;
     },
-    subscribe : async function(cron, query_params){
-        // TODO
-        return subscription_id;
+    subscribe : async function(cron, source_instance_identifier, query_params, start_date, end_date){
+        var [subscription, __] = await this.models.Subscription.findOrCreate({
+            where : {
+                SourceIdentifier : source_instance_identifier, // distinguishes between sources
+                QueryParamsJSON : JSON.stringify(query_params), // distinguishes between queries
+            }
+        })
+        return subscription;
     },
 }
 

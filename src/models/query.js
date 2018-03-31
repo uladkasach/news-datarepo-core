@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
         },
     );
     Query.associate = function(models) {
-        Query.belongsTo(models.Subscription); // may or maynot belong to a subscription, that is
+        Query.belongsToMany(models.Article, {through: 'Article_Query'}) // part of Article-Query Many-to-Many relationship
+        Query.belongsToMany(models.Subscription, {through: 'Subscription_Query'}) // part of Subscription-Query Many-to-Many relationship
     };
     return Query;
 };

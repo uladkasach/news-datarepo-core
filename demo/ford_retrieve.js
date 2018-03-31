@@ -10,7 +10,7 @@ var demo = async function(){
 
     var cache = new Cache(database_config);
     var source = new Source(source_config[0], cache);
-    var articles = await source.retrieve({query:"nyse ford", page:1, from:"2018-01-01", to:"2018-01-16"});
+    var articles = await source.retrieve({query:"motors", page:"all", from:"2018-01-01", to:"2018-01-15"});
     console.log(articles);
     console.log(articles.length);
 

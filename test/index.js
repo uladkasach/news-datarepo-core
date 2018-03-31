@@ -105,13 +105,35 @@ describe("sources", function(){
             var newsapi_source = new Source(news_api_live_config, cache);
         })
     })
-    describe("querying", async function(){
+    describe("retreive", async function(){
         it("should be able to retrieve data from a source", async function(){
             if(!thorough) this.skip();
             var cache = new Cache(sequelize_config);
             var newsapi_source = new Source(news_api_live_config, cache);
             var articles = await newsapi_source.retrieve({query:"ford nyse"});
             assert.equal(Array.isArray(articles), true);
+        })
+    })
+    describe("subscribe", function(){
+        it("should be able to subscribe to a query", async function(){
+            if(!thorough) this.skip();
+            var cache = new Cache(sequelize_config);
+            var newsapi_source = new Source(news_api_live_config, cache);
+            var subscription_id = await newsapi_source.subscribe({query:"ford nyse"}, {cron:"none", interval:"daily", start_date : "2018-03-20", end_date : "2018-03-25"});
+            assert.equal(typeof subscription_id, "string");
+        })
+        it("should be able to read from a query", async function(){
+            var cache = new Cache(sequelize_config);
+            var newsapi_source = new Source(news_api_live_config, cache);
+            var subscription_id = await newsapi_source.subscribe({query:"ford nyse"}, {cron:"none", interval:"daily", start_date : "2018-03-20", end_date : "2018-03-25"});
+            var articles = await newsapi_source.read(subscription_id);
+            assert.equal(Array.isArray(articles), true);
+        })
+        it("should be able to start cron", async function(){
+            this.skip(); // for manual testing, really. too complicated to test automatically.
+            var cache = new Cache(sequelize_config);
+            var newsapi_source = new Source(news_api_live_config, cache);
+            var subscription_id = await newsapi_source.subscribe({query:"ford nyse"}, {cron:"* * * * *", interval:"daily", start_date : "2018-03-20", end_date : "2018-03-25"});
         })
     })
 })
