@@ -1,8 +1,8 @@
 {
-  "name": "oracle-for-news",
+  "name": "news-datarepo-core",
   "version": "1.0.0",
-  "description": "",
-  "main": "newsapi.js",
+  "description": "core of news.datarepo.io; tools to enable simple retreival, caching, and querying of news data",
+  "main": "src/index.js",
   "scripts": {
     "test": "mocha",
     "clean": "node tools/clean_db.js"

@@ -2,6 +2,10 @@
 
 ## Usage
 
+### installation
+1. setup database and database config
+2. define configs for sources you want to use
+
 ### retreive / subscribe - to a request from a source
 - core wraps sources, which you can initialize from a config.json object, and caches requests that you send from it
     - subscription runs retreivals on a `cron` and asks cache not to associate duplicate articles
@@ -51,7 +55,6 @@ Launch on own server or use NewsOracle.Org for keeping data cached (db service) 
 ### Data Stored
 ```js
     {
-        publisher : __, // extracted from url
         timestamp : __, // retreived from sources
         title : __, // retreived from sources
         description : __, // retreived from sources
