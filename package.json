@@ -1,6 +1,6 @@
 {
   "name": "news-datarepo-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "core of news.datarepo.io; tools to enable simple retreival, caching, and querying of news data",
   "main": "src/index.js",
   "scripts": {
@@ -9,7 +9,6 @@
   },
   "author": "",
   "license": "ISC",
-  "private": true,
   "devDependencies": {
     "mocha": "^5.0.5",
     "news-datarepo-newsapi.org": "^1.0.3"

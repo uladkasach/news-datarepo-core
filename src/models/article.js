@@ -8,6 +8,10 @@ module.exports = function(sequelize, DataTypes) {
             Description : DataTypes.TEXT,
             Url : DataTypes.STRING,
         },
+        {
+            charset: 'utf8',
+            collate: 'utf8_unicode_ci',
+        }
     );
     Article.associate = function(models) {
         Article.belongsToMany(models.Query, {through: 'Article_Query'}) // part of Article-Query Many-to-Many relationship
