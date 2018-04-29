@@ -6,7 +6,7 @@
             "an_api_key",
             {
                 "endpoint" : "everything",
-                "language" : "us",
+                "language" : "en",
                 "catagory" : "business"
             }
         ]
